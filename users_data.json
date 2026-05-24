@@ -1,81 +1,278 @@
 {
   "users": [
     {
-      "username": "thànhdz",
-      "password": "15e2b0d3c33891ebb0f1ef609ec419420c20e320ce94c65fbc8c3312448eb225",
-      "name": null,
-      "age": null,
-      "gender": null,
-      "bio": null,
-      "profile_created": false,
-      "logged_in": false
-    },
-    {
-      "username": "thànhdzz",
-      "password": "bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a",
-      "name": null,
-      "age": null,
-      "gender": null,
-      "bio": null,
-      "profile_created": false,
-      "logged_in": false
-    },
-    {
-      "username": "thànhdzzz",
-      "password": "bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a",
-      "name": "thanhbaka",
-      "age": 20,
-      "gender": "Nam",
-      "bio": "dz ",
-      "profile_created": true,
-      "logged_in": true
-    },
-    {
-      "username": "béiu",
-      "password": "bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a",
-      "name": "vy",
-      "age": 18,
+      "username": "linh",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "name": "Linh",
+      "age": 22,
       "gender": "Nữ",
-      "bio": "dthw",
+      "bio": "Thích du lịch, mê trà sữa 🧋",
       "profile_created": true,
       "logged_in": true
     },
     {
-      "username": "toi",
+      "username": "minh",
       "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
-      "name": "toi",
-      "age": 20,
+      "name": "Minh",
+      "age": 25,
       "gender": "Nam",
-      "bio": "1mslkd",
+      "bio": "Kỹ sư phần mềm, thích nuôi mèo 🐱",
       "profile_created": true,
       "logged_in": true
     },
     {
-      "username": "toi11",
+      "username": "hoa",
       "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
-      "name": "qưee",
+      "name": "Hoa",
       "age": 20,
+      "gender": "Nữ",
+      "bio": "Yêu âm nhạc, chơi guitar ♪",
+      "profile_created": true,
+      "logged_in": true
+    },
+    {
+      "username": "khanh",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "name": "Khánh",
+      "age": 23,
       "gender": "Nam",
-      "bio": "rtve",
+      "bio": "Tình yêu thể thao, chơi bóng đá ⚽",
+      "profile_created": true,
+      "logged_in": true
+    },
+    {
+      "username": "hang",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "name": "Hằng",
+      "age": 21,
+      "gender": "Nữ",
+      "bio": "Yêu nấu ăn, chiều thơm ngon 🍜",
+      "profile_created": true,
+      "logged_in": true
+    },
+    {
+      "username": "vu",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "name": "Vũ",
+      "age": 24,
+      "gender": "Nam",
+      "bio": "Nhiếp ảnh gia, yêu thương thiên nhiên 📸",
       "profile_created": true,
       "logged_in": true
     }
   ],
   "friends": {
-    "thànhdz": [],
-    "thànhdzz": [],
-    "thànhdzzz": [
-      "vy"
+    "linh": [
+      "Minh",
+      "Khánh"
     ],
-    "béiu": [
-      "thanhbaka"
+    "minh": [
+      "Linh",
+      "Hoa",
+      "Vũ"
     ],
-    "toi": [
-      "thanhbaka",
-      "qưee"
+    "hoa": [
+      "Minh",
+      "Khánh"
     ],
-    "toi11": [
-      "toi"
+    "khanh": [
+      "Linh",
+      "Hoa",
+      "Hằng"
+    ],
+    "hang": [
+      "Khánh",
+      "Vũ"
+    ],
+    "vu": [
+      "Minh",
+      "Hằng"
+    ]
+  },
+  "messages": {
+    "Linh_Minh": [
+      {
+        "sender": "Linh",
+        "text": "Hi Minh, sao không online nhỉ? 😊",
+        "type": "text",
+        "timestamp": "2026-05-24T10:00:00"
+      },
+      {
+        "sender": "Minh",
+        "text": "Anh đang bận công việc, tối nhắn nhé!",
+        "type": "text",
+        "timestamp": "2026-05-24T10:05:00"
+      },
+      {
+        "sender": "Linh",
+        "text": "Ok, tối gọi anh thoại nhé",
+        "type": "text",
+        "timestamp": "2026-05-24T10:06:00"
+      },
+      {
+        "sender": "Hệ thống",
+        "text": "[Cuộc gọi thoại kết thúc]",
+        "type": "system",
+        "timestamp": "2026-05-24T18:30:00"
+      }
+    ],
+    "Hoa_Minh": [
+      {
+        "sender": "Hoa",
+        "text": "Anh Minh khỏe không? 💕",
+        "type": "text",
+        "timestamp": "2026-05-24T11:00:00"
+      },
+      {
+        "sender": "Minh",
+        "text": "Khỏe lắm em. Hôm nay giới thiệu bài guitar mới phát hiện được",
+        "type": "text",
+        "timestamp": "2026-05-24T11:05:00"
+      },
+      {
+        "sender": "Hoa",
+        "text": "Wow, nghe hay lắm! Gọi video để em nghe đi",
+        "type": "text",
+        "timestamp": "2026-05-24T11:06:00"
+      },
+      {
+        "sender": "Hệ thống",
+        "text": "[Cuộc gọi video kết thúc]",
+        "type": "system",
+        "timestamp": "2026-05-24T11:15:00"
+      }
+    ],
+    "Hằng_Khánh": [
+      {
+        "sender": "Hằng",
+        "text": "Em nấu canh cua hôm nay, anh muốn ăn không?",
+        "type": "text",
+        "timestamp": "2026-05-24T12:00:00"
+      },
+      {
+        "sender": "Khánh",
+        "text": "Ủa, vậy em nấu với công công gì? 👨‍🍳",
+        "type": "text",
+        "timestamp": "2026-05-24T12:05:00"
+      },
+      {
+        "sender": "Hằng",
+        "text": "Cua tươi, hành, tiêu, tỏi... cách làm nhà em",
+        "type": "text",
+        "timestamp": "2026-05-24T12:06:00"
+      },
+      {
+        "sender": "Khánh",
+        "text": "🎤 Tin nhắn thoại",
+        "type": "audio",
+        "timestamp": "2026-05-24T12:10:00"
+      },
+      {
+        "sender": "Hằng",
+        "text": "Ơi, cái giọng anh nghe cute quá! 😄",
+        "type": "text",
+        "timestamp": "2026-05-24T12:12:00"
+      }
+    ],
+    "Minh_Vũ": [
+      {
+        "sender": "Vũ",
+        "text": "Anh Minh, có đi chơi Hà Nội tối nay không?",
+        "type": "text",
+        "timestamp": "2026-05-24T14:00:00"
+      },
+      {
+        "sender": "Minh",
+        "text": "Có chứ, đi ăn gì sao?",
+        "type": "text",
+        "timestamp": "2026-05-24T14:05:00"
+      },
+      {
+        "sender": "Vũ",
+        "text": "Tao muốn ăn cơm tấm gà nướng, anh muốn gì?",
+        "type": "text",
+        "timestamp": "2026-05-24T14:06:00"
+      },
+      {
+        "sender": "Minh",
+        "text": "Ok, gặp tao ở hàng gà bếp 37 nhé",
+        "type": "text",
+        "timestamp": "2026-05-24T14:08:00"
+      },
+      {
+        "sender": "Hệ thống",
+        "text": "[Cuộc gọi thoại kết thúc]",
+        "type": "system",
+        "timestamp": "2026-05-24T14:15:00"
+      }
+    ],
+    "Linh_Khánh": [
+      {
+        "sender": "Khánh",
+        "text": "Em Linh, có rảnh cuối tuần không? 😍",
+        "type": "text",
+        "timestamp": "2026-05-24T15:00:00"
+      },
+      {
+        "sender": "Linh",
+        "text": "Có rảnh tý, sao anh?",
+        "type": "text",
+        "timestamp": "2026-05-24T15:03:00"
+      },
+      {
+        "sender": "Khánh",
+        "text": "Có muốn đi xem bóng đá không? Có trận lớn!",
+        "type": "text",
+        "timestamp": "2026-05-24T15:05:00"
+      },
+      {
+        "sender": "Linh",
+        "text": "Chắc được, gọi em chi tiết nhé",
+        "type": "text",
+        "timestamp": "2026-05-24T15:07:00"
+      }
+    ]
+  },
+  "calls": {
+    "Linh_Minh": [
+      {
+        "caller": "Linh",
+        "type": "voice",
+        "duration": 300,
+        "timestamp": "2026-05-24T18:30:00"
+      }
+    ],
+    "Hoa_Minh": [
+      {
+        "caller": "Hoa",
+        "type": "video",
+        "duration": 600,
+        "timestamp": "2026-05-24T11:15:00"
+      }
+    ],
+    "Hằng_Khánh": [
+      {
+        "caller": "Khánh",
+        "type": "voice",
+        "duration": 180,
+        "timestamp": "2026-05-24T12:10:00"
+      }
+    ],
+    "Minh_Vũ": [
+      {
+        "caller": "Minh",
+        "type": "voice",
+        "duration": 150,
+        "timestamp": "2026-05-24T14:15:00"
+      }
+    ],
+    "Linh_Khánh": [
+      {
+        "caller": "Khánh",
+        "type": "voice",
+        "duration": 240,
+        "timestamp": "2026-05-24T15:30:00"
+      }
     ]
   }
 }
