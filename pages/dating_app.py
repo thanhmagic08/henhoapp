@@ -155,6 +155,55 @@ def save_call_record(chat_key, caller, call_type, duration=0):
     data["calls"][chat_key].append(call_record)
     save_users_data(data)
 
+def send_friend_request(from_username, to_username):
+    """Gửi lời mời kết bạn (lưu username người gửi vào danh sách friend_requests của người nhận)"""
+    data = load_users_data()
+    data.setdefault("friend_requests", {})
+    data["friend_requests"].setdefault(to_username, [])
+    if from_username in data["friend_requests"][to_username]:
+        return False, "Đã gửi lời mời"
+    data["friend_requests"][to_username].append(from_username)
+    save_users_data(data)
+    return True, "Đã gửi lời mời kết bạn"
+
+def accept_friend_request(current_username, requester_username):
+    """Chấp nhận lời mời kết bạn: thêm vào cả 2 danh sách bạn và xoá lời mời"""
+    data = load_users_data()
+    data.setdefault("friends", {})
+    data.setdefault("friend_requests", {})
+
+    # Ensure friend lists exist
+    data["friends"].setdefault(current_username, [])
+    data["friends"].setdefault(requester_username, [])
+
+    # Find display names
+    req_user = next((u for u in data.get("users", []) if u.get("username") == requester_username), None)
+    cur_user = next((u for u in data.get("users", []) if u.get("username") == current_username), None)
+    req_name = req_user.get("name") if req_user else requester_username
+    cur_name = cur_user.get("name") if cur_user else current_username
+
+    # Add each other if not already friends
+    if req_name not in data["friends"][current_username]:
+        data["friends"][current_username].append(req_name)
+    if cur_name not in data["friends"][requester_username]:
+        data["friends"][requester_username].append(cur_name)
+
+    # Remove the friend request
+    if requester_username in data["friend_requests"].get(current_username, []):
+        data["friend_requests"][current_username].remove(requester_username)
+
+    save_users_data(data)
+    return True
+
+def reject_friend_request(current_username, requester_username):
+    data = load_users_data()
+    data.setdefault("friend_requests", {})
+    if requester_username in data["friend_requests"].get(current_username, []):
+        data["friend_requests"][current_username].remove(requester_username)
+        save_users_data(data)
+        return True
+    return False
+
 # 1. Khởi tạo dữ liệu (sử dụng setdefault để tránh AttributeError)
 st.session_state.setdefault("user_profile", None)
 st.session_state.setdefault("matched_user", None)
@@ -338,6 +387,34 @@ else:
     </script>
     """, unsafe_allow_html=True)
 
+    # ----- Hiển thị Lời mời kết bạn (Sidebar) -----
+    data_local = load_users_data()
+    friend_requests = data_local.get("friend_requests", {}).get(current_username, [])
+    if friend_requests:
+        with st.sidebar.expander("📬 Lời mời kết bạn", expanded=True):
+            for req_username in friend_requests:
+                req_user = next((u for u in st.session_state.all_users if u.get("username") == req_username), None)
+                display_name = req_user.get("name") if req_user else req_username
+                cols = st.columns([2,1,1])
+                cols[0].write(f"➡️ {display_name}")
+                if cols[1].button("✅ Chấp nhận", key=f"accept_req_{req_username}"):
+                    ok = accept_friend_request(current_username, req_username)
+                    if ok:
+                        # Cập nhật session_state và file_friends
+                        st.session_state.file_friends = load_users_data().get("friends", {})
+                        st.session_state.user_friends[current_username] = st.session_state.file_friends.get(current_username, [])
+                        st.success(f"✅ Đã chấp nhận lời mời từ {display_name}")
+                        st.rerun()
+                    else:
+                        st.error("❌ Không thể chấp nhận. Thử lại sau.")
+                if cols[2].button("❌ Từ chối", key=f"reject_req_{req_username}"):
+                    ok = reject_friend_request(current_username, req_username)
+                    if ok:
+                        st.success(f"❌ Đã từ chối lời mời từ {display_name}")
+                        st.rerun()
+                    else:
+                        st.error("❌ Không thể từ chối. Thử lại sau.")
+
     # CHIA GIAO DIỆN THÀNH 2 CỘT
     col1, col2 = st.columns([1, 2])
 
@@ -414,19 +491,15 @@ else:
                         
                         with col_add:
                             if st.button(f"➕ Kết bạn", key=f"add_friend_{user['name']}"):
-                                if user['name'] not in user_friends:
-                                    user_friends.append(user['name'])
-                                    st.session_state.user_friends[current_username] = user_friends
-                                    st.session_state.file_friends[current_username] = user_friends
-                                    # Lưu vào file ngay lập tức
-                                    data = load_users_data()
-                                    data.setdefault("friends", {})
-                                    data["friends"][current_username] = user_friends
-                                    save_users_data(data)
-                                    st.success(f"✅ Đã kết bạn với {user['name']}")
-                                    st.rerun()
+                                # Gửi lời mời kết bạn (theo username)
+                                sender_username = current_username
+                                recipient_username = user.get("username")
+                                success, msg = send_friend_request(sender_username, recipient_username)
+                                if success:
+                                    st.success(f"✅ {msg} tới {user['name']}")
                                 else:
-                                    st.warning(f"⚠️ Bạn đã là bạn của {user['name']} rồi!")
+                                    st.warning(f"⚠️ {msg}")
+                                st.rerun()
             else:
                 if search_query.strip():
                     st.warning(f"❌ Không tìm thấy ai có tên chứa '{search_query}'")
@@ -444,19 +517,19 @@ else:
         with tab1:
             st.subheader("🌐 Sảnh chờ chung (N-N Chat)")
             
-            # ---- HIỂN THỊ CHAT N-N (load từ file và lọc theo danh sách bạn) ----
+            # ---- HIỂN THỊ CHAT N-N (load từ file giống chat 1:1 và lưu vào session_state) ----
             chat_container_nn = st.container(height=300)
-            group_msgs = load_group_messages()
+            # Load group messages into session state so they behave like private chat history
+            st.session_state.messages_nn = load_group_messages()
             # Danh sách tên bạn (hiển thị chỉ các tin nhắn từ bạn bè hoặc chính bạn)
             friend_names = st.session_state.user_friends.get(current_username, [])
-            for msg in group_msgs:
+            for msg in st.session_state.messages_nn:
                 sender = msg.get('sender')
                 if msg.get('type') == 'system' or sender == st.session_state.user_profile.get('name') or sender in friend_names:
                     if msg.get("type") == "system":
                         chat_container_nn.info(msg['text'])
                     elif msg.get("type") == "image":
                         chat_container_nn.write(f"**{msg['sender']}:**")
-                        # For group images we only store filename; display filename
                         chat_container_nn.write(f"[Hình ảnh] {msg.get('text')}")
                     elif msg.get("type") == "audio":
                         chat_container_nn.write(f"**{msg['sender']}:** 🎤 Tin nhắn thoại")
@@ -550,6 +623,11 @@ else:
             
             # Xử lý submission bên ngoài form (lưu vào file group)
             if submit_clicked and user_msg_nn:
+                # Append to session_state immediately for in-run display
+                try:
+                    st.session_state.messages_nn.append({"sender": st.session_state.user_profile['name'], "text": user_msg_nn, "type": "text", "timestamp": datetime.now().isoformat()})
+                except Exception:
+                    st.session_state.messages_nn = [{"sender": st.session_state.user_profile['name'], "text": user_msg_nn, "type": "text", "timestamp": datetime.now().isoformat()}]
                 save_group_message(st.session_state.user_profile['name'], user_msg_nn, "text")
                 st.success("✅ Đã gửi tin nhắn vào sảnh chung")
                 st.rerun()
@@ -557,7 +635,11 @@ else:
             # Xử lý hình ảnh được lưu trong pending_upload
             if st.session_state.pending_upload_nn["image"] is not None:
                 img = st.session_state.pending_upload_nn["image"]
-                # Lưu tên file vào group messages
+                # Append to session_state and save filename to group messages
+                try:
+                    st.session_state.messages_nn.append({"sender": st.session_state.user_profile['name'], "text": f"📷 {img.name}", "type": "image", "timestamp": datetime.now().isoformat()})
+                except Exception:
+                    st.session_state.messages_nn = [{"sender": st.session_state.user_profile['name'], "text": f"📷 {img.name}", "type": "image", "timestamp": datetime.now().isoformat()}]
                 save_group_message(st.session_state.user_profile['name'], f"📷 {img.name}", "image")
                 st.session_state.pending_upload_nn["image"] = None
                 st.session_state.uploaded_image_nn_id = None
@@ -567,6 +649,10 @@ else:
             # Xử lý tệp được lưu trong pending_upload
             if st.session_state.pending_upload_nn["file"] is not None:
                 f = st.session_state.pending_upload_nn["file"]
+                try:
+                    st.session_state.messages_nn.append({"sender": st.session_state.user_profile['name'], "text": f"📎 {f.name}", "type": "file", "timestamp": datetime.now().isoformat()})
+                except Exception:
+                    st.session_state.messages_nn = [{"sender": st.session_state.user_profile['name'], "text": f"📎 {f.name}", "type": "file", "timestamp": datetime.now().isoformat()}]
                 save_group_message(st.session_state.user_profile['name'], f"📎 {f.name}", "file")
                 st.session_state.pending_upload_nn["file"] = None
                 st.success("✅ Đã gửi tệp vào sảnh chung")
@@ -575,6 +661,10 @@ else:
             # Xử lý âm thanh được lưu trong pending_upload
             if st.session_state.pending_upload_nn["audio"] is not None:
                 audio = st.session_state.pending_upload_nn["audio"]
+                try:
+                    st.session_state.messages_nn.append({"sender": st.session_state.user_profile['name'], "text": "🎤 Tin nhắn thoại", "type": "audio", "timestamp": datetime.now().isoformat()})
+                except Exception:
+                    st.session_state.messages_nn = [{"sender": st.session_state.user_profile['name'], "text": "🎤 Tin nhắn thoại", "type": "audio", "timestamp": datetime.now().isoformat()}]
                 save_group_message(st.session_state.user_profile['name'], "🎤 Tin nhắn thoại", "audio")
                 st.session_state.pending_upload_nn["audio"] = None
                 st.success("✅ Đã gửi tin nhắn thoại vào sảnh chung")
@@ -584,11 +674,7 @@ else:
         with tab2:
             st.subheader("🔒 Trò chuyện riêng tư (1:1 Chat)")
             
-            # Nút làm mới để cập nhật tin nhắn mới
-            col_refresh, col_spacer = st.columns([0.15, 0.85])
-            with col_refresh:
-                if st.button("🔄 Làm mới", help="Nhấn để tải tin nhắn mới"):
-                    st.rerun()
+            # Tin nhắn sẽ tự động cập nhật nhờ cơ chế auto-reload (2s)
             
             # Hiển thị danh sách bạn bè để chọn chat
             if user_friends:

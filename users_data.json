@@ -339,6 +339,12 @@
         "text": "hi",
         "type": "text",
         "timestamp": "2026-05-24T15:59:58.797497"
+      },
+      {
+        "sender": "thành",
+        "text": "ê",
+        "type": "text",
+        "timestamp": "2026-05-24T16:16:29.797073"
       }
     ]
   },
@@ -391,5 +397,13 @@
         "timestamp": "2026-05-24T12:13:43.325541"
       }
     ]
-  }
+  },
+  "group_messages": [
+    {
+      "sender": "hehe",
+      "text": "hi",
+      "type": "text",
+      "timestamp": "2026-05-24T16:16:19.220833"
+    }
+  ]
 }
