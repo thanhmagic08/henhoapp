@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ứng Dụng Hẹn Hò Siêu Tốc</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #FFF0F5 0%, #FFE4F0 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #FF69B4 0%, #FF1493 100%);
+            padding: 80px 20px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            margin: 30px 0 40px 0;
+            box-shadow: 0 8px 32px rgba(255, 20, 147, 0.3);
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.95;
+            animation: slideUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Section Titles */
+        .section-title {
+            text-align: center;
+            color: #FF1493;
+            font-size: 2.2rem;
+            margin: 50px 0 40px 0;
+            font-weight: bold;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left: 5px solid #FF69B4;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #FF1493;
+            margin-bottom: 10px;
+        }
+
+        .feature-desc {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Statistics Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #FF69B4 0%, #FFB6D9 100%);
+            padding: 40px 30px;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 20, 147, 0.2);
+            transition: transform 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stat-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.95;
+            margin-bottom: 10px;
+        }
+
+        .stat-change {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            background: rgba(255,255,255,0.3);
+            padding: 8px 12px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        /* Guide Section */
+        .guide-container {
+            max-width: 800px;
+            margin: 0 auto 50px;
+        }
+
+        .guide-step {
+            background: #F8F8F8;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #FF69B4;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .guide-step:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .guide-step:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .guide-step:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        .step-number {
+            background: #FF69B4;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #FF1493;
+            margin-bottom: 5px;
+        }
+
+        .step-desc {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            margin: 50px 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF69B4 0%, #FF1493 100%);
+            color: white;
+            padding: 18px 50px;
+            border-radius: 50px;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(255, 20, 147, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            cursor: pointer;
+            animation: slideUp 0.8s ease-out 0.4s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 20, 147, 0.6);
+        }
+
+        .cta-button:active {
+            transform: translateY(-2px);
+        }
+
+        /* Footer Section */
+        .footer-section {
+            text-align: center;
+            margin-top: 60px;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, #FFE4F0 0%, #FFD1E3 100%);
+            border-radius: 15px;
+        }
+
+        .footer-text {
+            font-size: 1.3rem;
+            color: #FF1493;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer-copyright {
+            color: #FF69B4;
+            font-size: 0.95rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .features-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .guide-step {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .step-number {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1 class="hero-title">❤️ Ứng Dụng Hẹn Hò Siêu Tốc</h1>
+            <p class="hero-subtitle">Tìm người khác nửa của bạn ngay hôm nay!</p>
+        </div>
+
+        <!-- Features Section -->
+        <h2 class="section-title">✨ Các Tính Năng Chính</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <div class="feature-title">Tìm Kiếm Thông Minh</div>
+                <div class="feature-desc">Quẹt trái/phải để tìm người phù hợp với bộ lọc tùy chỉnh</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <div class="feature-title">Chat Đa Dạng</div>
+                <div class="feature-desc">Chat chung N-N, riêng tư 1:1, và kênh thông báo 1:N</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📞</div>
+                <div class="feature-title">Gọi Thoại</div>
+                <div class="feature-desc">Gọi thoại trực tiếp với người bạn match được</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎤</div>
+                <div class="feature-title">Tin Nhắn Thoại</div>
+                <div class="feature-desc">Ghi âm và gửi tin nhắn thoại nhanh chóng</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🖼️</div>
+                <div class="feature-title">Chia Sẻ Ảnh</div>
+                <div class="feature-desc">Gửi và xem ảnh từ bạn chat của bạn</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📎</div>
+                <div class="feature-title">Tệp Đính Kèm</div>
+                <div class="feature-desc">Chia sẻ tệp và tài liệu dễ dàng</div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <h2 class="section-title">📊 Thống Kê Ứng Dụng</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-label">Thành Viên Hoạt Động</div>
+                <div class="stat-number">1,234</div>
+                <div class="stat-change">📈 +25 hôm nay</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">💑</div>
+                <div class="stat-label">Cặp Đôi Hạnh Phúc</div>
+                <div class="stat-number">456</div>
+                <div class="stat-change">💕 +12 hôm nay</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">💬</div>
+                <div class="stat-label">Tin Nhắn Được Gửi</div>
+                <div class="stat-number">12,345</div>
+                <div class="stat-change">🔥 +1,200 hôm nay</div>
+            </div>
+        </div>
+
+        <!-- Guide Section -->
+        <h2 class="section-title">📋 Hướng Dẫn Nhanh</h2>
+        <div class="guide-container">
+            <div class="guide-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">Tạo Hồ Sơ</div>
+                    <div class="step-desc">Điền thông tin cá nhân và chọn ảnh đại diện (nếu có)</div>
+                </div>
+            </div>
+
+            <div class="guide-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">Tìm Kiếm</div>
+                    <div class="step-desc">Quẹt trái (❌) bỏ qua hoặc quẹt phải (❤️) để match</div>
+                </div>
+            </div>
+
+            <div class="guide-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">Chat</div>
+                    <div class="step-desc">Trò chuyện với người bạn match được hoặc tất cả mọi người</div>
+                </div>
+            </div>
+
+            <div class="guide-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <div class="step-title">Kết Nối</div>
+                    <div class="step-desc">Gửi ảnh, thoại, tệp hoặc gọi thoại để gần gũi hơn!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <h2 class="section-title">🚀 Bắt Đầu Ngay</h2>
+        <div class="cta-section">
+            <a href="http://192.168.1.32:8501" target="_blank" class="cta-button">
+                ➡️ Vào ứng dụng ngay!
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-section">
+            <p class="footer-text">💕 Chúc bạn tìm được nửa kia của mình! 💕</p>
+            <p class="footer-copyright">© 2026 - Ứng Dụng Hẹn Hò Siêu Tốc | Tất cả quyền được bảo lưu</p>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .stat-card, .guide-step').forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(element);
+        });
+    </script>
+</body>
+</html>
