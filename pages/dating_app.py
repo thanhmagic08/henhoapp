@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import os
 import hashlib
+from datetime import datetime
 
 # ---- HÀM LƯU/TẢI DỮ LIỆU ----
 DATA_FILE = "users_data.json"
@@ -77,6 +78,59 @@ def logout_user():
     """Đăng xuất người dùng"""
     st.session_state.user_profile = None
     st.session_state.matched_user = None
+
+def load_private_messages(chat_key):
+    """Load tin nhắn riêng tư (1:1) từ file JSON"""
+    data = load_users_data()
+    if "messages" not in data:
+        data["messages"] = {}
+    return data.get("messages", {}).get(chat_key, [])
+
+def save_private_message(chat_key, sender, text, msg_type="text"):
+    """Lưu tin nhắn riêng tư (1:1) vào file JSON"""
+    from datetime import datetime
+    data = load_users_data()
+    if "messages" not in data:
+        data["messages"] = {}
+    
+    if chat_key not in data["messages"]:
+        data["messages"][chat_key] = []
+    
+    message = {
+        "sender": sender,
+        "text": text,
+        "type": msg_type,
+        "timestamp": datetime.now().isoformat()
+    }
+    data["messages"][chat_key].append(message)
+    save_users_data(data)
+    return True
+
+def load_calls(chat_key):
+    """Load lịch sử cuộc gọi từ file JSON"""
+    data = load_users_data()
+    if "calls" not in data:
+        data["calls"] = {}
+    return data.get("calls", {}).get(chat_key, [])
+
+def save_call_record(chat_key, caller, call_type, duration=0):
+    """Lưu ghi chép cuộc gọi vào file JSON"""
+    from datetime import datetime
+    data = load_users_data()
+    if "calls" not in data:
+        data["calls"] = {}
+    
+    if chat_key not in data["calls"]:
+        data["calls"][chat_key] = []
+    
+    call_record = {
+        "caller": caller,
+        "type": call_type,  # "voice" hoặc "video"
+        "duration": duration,
+        "timestamp": datetime.now().isoformat()
+    }
+    data["calls"][chat_key].append(call_record)
+    save_users_data(data)
 
 # 1. Khởi tạo dữ liệu
 if "user_profile" not in st.session_state:
@@ -516,6 +570,12 @@ else:
         with tab2:
             st.subheader("🔒 Trò chuyện riêng tư (1:1 Chat)")
             
+            # Nút làm mới để cập nhật tin nhắn mới
+            col_refresh, col_spacer = st.columns([0.15, 0.85])
+            with col_refresh:
+                if st.button("🔄 Làm mới", help="Nhấn để tải tin nhắn mới"):
+                    st.rerun()
+            
             # Hiển thị danh sách bạn bè để chọn chat
             if user_friends:
                 st.write("**Chọn một bạn để chat riêng:**")
@@ -525,13 +585,13 @@ else:
                     # Tạo khoá chat unified (sorted để cả 2 bên đều dùng khoá giống nhau)
                     chat_key = "_".join(sorted([st.session_state.user_profile['name'], selected_friend]))
                     
+                    # Load tin nhắn từ file JSON
+                    if chat_key not in st.session_state.messages_11:
+                        st.session_state.messages_11[chat_key] = load_private_messages(chat_key)
+                    
                     # Khởi tạo pending_upload nếu chưa có
                     if chat_key not in st.session_state.pending_upload_11:
                         st.session_state.pending_upload_11[chat_key] = {"image": None, "file": None, "audio": None}
-                    
-                    # Khởi tạo messages nếu chưa có
-                    if chat_key not in st.session_state.messages_11:
-                        st.session_state.messages_11[chat_key] = []
                     
                     # ---- PHẦN CUỘC GỌI (Voice/Video Call) ----
                     call_key = f"call_{chat_key}"
@@ -545,6 +605,8 @@ else:
                         if not st.session_state.active_call[call_key]:
                             if st.button("📞 Gọi thoại", key=f"voice_call_{chat_key}"):
                                 st.session_state.active_call[call_key] = True
+                                # Lưu ghi chép cuộc gọi vào file
+                                save_call_record(chat_key, st.session_state.user_profile['name'], "voice")
                                 st.success(f"📞 Đang gọi {selected_friend}... Chờ phía bên kia trả lời.")
                                 st.rerun()
                         else:
@@ -553,6 +615,8 @@ else:
                                 st.session_state.messages_11[chat_key].append(
                                     {"sender": "Hệ thống", "text": f"[Cuộc gọi thoại kết thúc]", "type": "system"}
                                 )
+                                # Lưu tin nhắn hệ thống vào file
+                                save_private_message(chat_key, "Hệ thống", "[Cuộc gọi thoại kết thúc]", "system")
                                 st.rerun()
                     
                     with col_call2:
@@ -562,6 +626,8 @@ else:
                         if not st.session_state.active_video_call[video_call_key]:
                             if st.button("📹 Video", key=f"video_call_start_{chat_key}"):
                                 st.session_state.active_video_call[video_call_key] = True
+                                # Lưu ghi chép cuộc gọi video vào file
+                                save_call_record(chat_key, st.session_state.user_profile['name'], "video")
                                 st.success(f"📹 Đang gửi video cho {selected_friend}... Chờ trả lời.")
                                 st.rerun()
                         else:
@@ -570,6 +636,8 @@ else:
                                 st.session_state.messages_11[chat_key].append(
                                     {"sender": "Hệ thống", "text": f"[Cuộc gọi video kết thúc]", "type": "system"}
                                 )
+                                # Lưu tin nhắn hệ thống vào file
+                                save_private_message(chat_key, "Hệ thống", "[Cuộc gọi video kết thúc]", "system")
                                 st.rerun()
                     
                     with col_call3:
@@ -588,8 +656,11 @@ else:
                     # ---- HIỂN THỊ CHAT ----
                     chat_container_11 = st.container(height=250)
                     
+                    # Load lại tin nhắn từ file JSON mỗi lần (để đồng bộ real-time)
+                    current_messages = load_private_messages(chat_key)
+                    
                     # Hiển thị lịch sử chat 1:1
-                    for msg in st.session_state.messages_11.get(chat_key, []):
+                    for msg in current_messages:
                         if msg.get("type") == "system":
                             chat_container_11.info(msg['text'])
                         elif msg.get("type") == "image":
@@ -666,6 +737,8 @@ else:
                     # Xử lý submission bên ngoài form
                     if submit_clicked_11 and user_msg_11:
                         st.session_state.messages_11[chat_key].append({"sender": st.session_state.user_profile['name'], "text": user_msg_11})
+                        # Lưu vào file JSON
+                        save_private_message(chat_key, st.session_state.user_profile['name'], user_msg_11, "text")
                         st.rerun()
                     
                     # Xử lý hình ảnh được lưu
@@ -677,6 +750,8 @@ else:
                             "image_data": img,
                             "file_name": img.name
                         })
+                        # Lưu vào file JSON (lưu tên file thôi, không lưu dữ liệu ảnh)
+                        save_private_message(chat_key, st.session_state.user_profile['name'], f"📷 {img.name}", "image")
                         st.session_state.pending_upload_11[chat_key]["image"] = None
                         st.session_state.uploaded_image_11_id[chat_key] = None
                         st.success(f"✅ Đã gửi hình ảnh cho {selected_friend}")
@@ -691,6 +766,8 @@ else:
                             "file_name": f.name,
                             "file_data": f.read()
                         })
+                        # Lưu vào file JSON (lưu tên file thôi)
+                        save_private_message(chat_key, st.session_state.user_profile['name'], f"📎 {f.name}", "file")
                         st.session_state.pending_upload_11[chat_key]["file"] = None
                         st.success(f"✅ Đã gửi tệp cho {selected_friend}")
                         st.rerun()
@@ -703,6 +780,8 @@ else:
                             "type": "audio",
                             "audio_data": audio
                         })
+                        # Lưu vào file JSON (lưu thông báo lời nhắn thoại)
+                        save_private_message(chat_key, st.session_state.user_profile['name'], "🎤 Tin nhắn thoại", "audio")
                         st.session_state.pending_upload_11[chat_key]["audio"] = None
                         st.success(f"✅ Đã gửi tin nhắn thoại cho {selected_friend}")
                         st.rerun()
