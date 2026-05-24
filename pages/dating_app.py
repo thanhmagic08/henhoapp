@@ -106,6 +106,29 @@ def save_private_message(chat_key, sender, text, msg_type="text"):
     save_users_data(data)
     return True
 
+def load_group_messages():
+    """Load global group (N-N) messages from file"""
+    data = load_users_data()
+    if "group_messages" not in data:
+        data["group_messages"] = []
+    return data.get("group_messages", [])
+
+def save_group_message(sender, text, msg_type="text"):
+    """Save a message to the global group chat"""
+    from datetime import datetime
+    data = load_users_data()
+    if "group_messages" not in data:
+        data["group_messages"] = []
+    msg = {
+        "sender": sender,
+        "text": text,
+        "type": msg_type,
+        "timestamp": datetime.now().isoformat()
+    }
+    data["group_messages"].append(msg)
+    save_users_data(data)
+    return True
+
 def load_calls(chat_key):
     """Load lịch sử cuộc gọi từ file JSON"""
     data = load_users_data()
@@ -306,6 +329,15 @@ else:
         st.success("✅ Đã đăng xuất. Tạm biệt! 👋")
         st.rerun()
 
+    # Auto-refresh client-side mỗi 2 giây để cập nhật tin nhắn real-time
+    st.markdown("""
+    <script>
+        const INTERVAL = 2000;
+        // Only refresh when user is logged in (the server serves this snippet only when logged-in)
+        setInterval(() => { window.location.reload(); }, INTERVAL);
+    </script>
+    """, unsafe_allow_html=True)
+
     # CHIA GIAO DIỆN THÀNH 2 CỘT
     col1, col2 = st.columns([1, 2])
 
@@ -412,21 +444,27 @@ else:
         with tab1:
             st.subheader("🌐 Sảnh chờ chung (N-N Chat)")
             
-            # ---- HIỂN THỊ CHAT N-N ----
+            # ---- HIỂN THỊ CHAT N-N (load từ file và lọc theo danh sách bạn) ----
             chat_container_nn = st.container(height=300)
-            for msg in st.session_state.messages_nn:
-                if msg.get("type") == "system":
-                    chat_container_nn.info(msg['text'])
-                elif msg.get("type") == "image":
-                    chat_container_nn.write(f"**{msg['sender']}:**")
-                    chat_container_nn.image(msg['image_data'], caption=msg.get('file_name', 'Hình ảnh'))
-                elif msg.get("type") == "audio":
-                    chat_container_nn.write(f"**{msg['sender']}:** 🎤 Tin nhắn thoại")
-                    chat_container_nn.audio(msg['audio_data'])
-                elif msg.get("type") == "file":
-                    chat_container_nn.write(f"**{msg['sender']}:** 📎 {msg.get('file_name', 'Tệp đính kèm')}")
-                else:
-                    chat_container_nn.write(f"**{msg['sender']}:** {msg['text']}")
+            group_msgs = load_group_messages()
+            # Danh sách tên bạn (hiển thị chỉ các tin nhắn từ bạn bè hoặc chính bạn)
+            friend_names = st.session_state.user_friends.get(current_username, [])
+            for msg in group_msgs:
+                sender = msg.get('sender')
+                if msg.get('type') == 'system' or sender == st.session_state.user_profile.get('name') or sender in friend_names:
+                    if msg.get("type") == "system":
+                        chat_container_nn.info(msg['text'])
+                    elif msg.get("type") == "image":
+                        chat_container_nn.write(f"**{msg['sender']}:**")
+                        # For group images we only store filename; display filename
+                        chat_container_nn.write(f"[Hình ảnh] {msg.get('text')}")
+                    elif msg.get("type") == "audio":
+                        chat_container_nn.write(f"**{msg['sender']}:** 🎤 Tin nhắn thoại")
+                        chat_container_nn.write(msg.get('text'))
+                    elif msg.get("type") == "file":
+                        chat_container_nn.write(f"**{msg['sender']}:** 📎 {msg.get('text')}")
+                    else:
+                        chat_container_nn.write(f"**{msg['sender']}:** {msg['text']}")
             
             st.divider()
             
@@ -510,20 +548,17 @@ else:
                 with col_send:
                     submit_clicked = st.form_submit_button("↩️", use_container_width=True, help="Gửi (Enter)")
             
-            # Xử lý submission bên ngoài form
+            # Xử lý submission bên ngoài form (lưu vào file group)
             if submit_clicked and user_msg_nn:
-                st.session_state.messages_nn.append({"sender": st.session_state.user_profile['name'], "text": user_msg_nn})
+                save_group_message(st.session_state.user_profile['name'], user_msg_nn, "text")
+                st.success("✅ Đã gửi tin nhắn vào sảnh chung")
                 st.rerun()
             
             # Xử lý hình ảnh được lưu trong pending_upload
             if st.session_state.pending_upload_nn["image"] is not None:
                 img = st.session_state.pending_upload_nn["image"]
-                st.session_state.messages_nn.append({
-                    "sender": st.session_state.user_profile['name'],
-                    "type": "image",
-                    "image_data": img,
-                    "file_name": img.name
-                })
+                # Lưu tên file vào group messages
+                save_group_message(st.session_state.user_profile['name'], f"📷 {img.name}", "image")
                 st.session_state.pending_upload_nn["image"] = None
                 st.session_state.uploaded_image_nn_id = None
                 st.success("✅ Đã gửi hình ảnh vào sảnh chung")
@@ -532,12 +567,7 @@ else:
             # Xử lý tệp được lưu trong pending_upload
             if st.session_state.pending_upload_nn["file"] is not None:
                 f = st.session_state.pending_upload_nn["file"]
-                st.session_state.messages_nn.append({
-                    "sender": st.session_state.user_profile['name'],
-                    "type": "file",
-                    "file_name": f.name,
-                    "file_data": f.read()
-                })
+                save_group_message(st.session_state.user_profile['name'], f"📎 {f.name}", "file")
                 st.session_state.pending_upload_nn["file"] = None
                 st.success("✅ Đã gửi tệp vào sảnh chung")
                 st.rerun()
@@ -545,11 +575,7 @@ else:
             # Xử lý âm thanh được lưu trong pending_upload
             if st.session_state.pending_upload_nn["audio"] is not None:
                 audio = st.session_state.pending_upload_nn["audio"]
-                st.session_state.messages_nn.append({
-                    "sender": st.session_state.user_profile['name'],
-                    "type": "audio",
-                    "audio_data": audio
-                })
+                save_group_message(st.session_state.user_profile['name'], "🎤 Tin nhắn thoại", "audio")
                 st.session_state.pending_upload_nn["audio"] = None
                 st.success("✅ Đã gửi tin nhắn thoại vào sảnh chung")
                 st.rerun()

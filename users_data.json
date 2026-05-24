@@ -333,6 +333,12 @@
         "text": "[Cuộc gọi thoại kết thúc]",
         "type": "system",
         "timestamp": "2026-05-24T12:13:52.235166"
+      },
+      {
+        "sender": "thành",
+        "text": "hi",
+        "type": "text",
+        "timestamp": "2026-05-24T15:59:58.797497"
       }
     ]
   },
