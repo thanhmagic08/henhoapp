@@ -59,6 +59,56 @@
       "bio": "Nhiếp ảnh gia, yêu thương thiên nhiên 📸",
       "profile_created": true,
       "logged_in": true
+    },
+    {
+      "username": "toi",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "name": "toi",
+      "age": 21,
+      "gender": "Nam",
+      "bio": "ấdgs",
+      "profile_created": true,
+      "logged_in": true
+    },
+    {
+      "username": "toi11",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "name": "toi11",
+      "age": 22,
+      "gender": "Nam",
+      "bio": "sfsgsdg",
+      "profile_created": true,
+      "logged_in": true
+    },
+    {
+      "username": "thànhdz",
+      "password": "bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a",
+      "name": "thành",
+      "age": 20,
+      "gender": "Nam",
+      "bio": "hihi",
+      "profile_created": true,
+      "logged_in": true
+    },
+    {
+      "username": "hehe",
+      "password": "bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a",
+      "name": "hehe",
+      "age": 20,
+      "gender": "Nữ",
+      "bio": "ồ kê",
+      "profile_created": true,
+      "logged_in": true
+    },
+    {
+      "username": "hehee",
+      "password": "bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a",
+      "name": null,
+      "age": null,
+      "gender": null,
+      "bio": null,
+      "profile_created": false,
+      "logged_in": false
     }
   ],
   "friends": {
@@ -87,7 +137,20 @@
     "vu": [
       "Minh",
       "Hằng"
-    ]
+    ],
+    "toi": [
+      "toi11"
+    ],
+    "toi11": [
+      "toi"
+    ],
+    "thànhdz": [
+      "hehe"
+    ],
+    "hehe": [
+      "thành"
+    ],
+    "hehee": []
   },
   "messages": {
     "Linh_Minh": [
@@ -231,6 +294,46 @@
         "type": "text",
         "timestamp": "2026-05-24T15:07:00"
       }
+    ],
+    "toi_toi11": [
+      {
+        "sender": "toi11",
+        "text": "vfgd",
+        "type": "text",
+        "timestamp": "2026-05-24T11:26:57.454549"
+      },
+      {
+        "sender": "toi",
+        "text": "fddh",
+        "type": "text",
+        "timestamp": "2026-05-24T11:27:03.042023"
+      }
+    ],
+    "hehe_thành": [
+      {
+        "sender": "thành",
+        "text": "hi",
+        "type": "text",
+        "timestamp": "2026-05-24T12:12:12.694828"
+      },
+      {
+        "sender": "hehe",
+        "text": "hi cậu",
+        "type": "text",
+        "timestamp": "2026-05-24T12:12:42.537873"
+      },
+      {
+        "sender": "thành",
+        "text": "có gì không á",
+        "type": "text",
+        "timestamp": "2026-05-24T12:13:10.779053"
+      },
+      {
+        "sender": "Hệ thống",
+        "text": "[Cuộc gọi thoại kết thúc]",
+        "type": "system",
+        "timestamp": "2026-05-24T12:13:52.235166"
+      }
     ]
   },
   "calls": {
@@ -272,6 +375,14 @@
         "type": "voice",
         "duration": 240,
         "timestamp": "2026-05-24T15:30:00"
+      }
+    ],
+    "hehe_thành": [
+      {
+        "caller": "hehe",
+        "type": "voice",
+        "duration": 0,
+        "timestamp": "2026-05-24T12:13:43.325541"
       }
     ]
   }

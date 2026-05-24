@@ -132,33 +132,21 @@ def save_call_record(chat_key, caller, call_type, duration=0):
     data["calls"][chat_key].append(call_record)
     save_users_data(data)
 
-# 1. Khởi tạo dữ liệu
-if "user_profile" not in st.session_state:
-    st.session_state.user_profile = None
-if "matched_user" not in st.session_state:
-    st.session_state.matched_user = None
-if "messages_nn" not in st.session_state:
-    st.session_state.messages_nn = [
-        {"sender": "Hệ thống", "text": "👋 Chào mừng! Bạn có thể kết bạn để chat chung hoặc chat riêng với bạn bè. Hãy chọn bạn ở phần bên trái nhé!", "type": "system"}
-    ]
-if "messages_11" not in st.session_state:
-    st.session_state.messages_11 = {}
-if "active_call" not in st.session_state:
-    st.session_state.active_call = {}
-if "call_duration" not in st.session_state:
-    st.session_state.call_duration = 0
-if "active_video_call" not in st.session_state:
-    st.session_state.active_video_call = {}
-if "pending_upload_nn" not in st.session_state:
-    st.session_state.pending_upload_nn = {"image": None, "file": None, "audio": None}
-if "pending_upload_11" not in st.session_state:
-    st.session_state.pending_upload_11 = {}
-if "uploaded_image_nn_id" not in st.session_state:
-    st.session_state.uploaded_image_nn_id = None
-if "uploaded_image_11_id" not in st.session_state:
-    st.session_state.uploaded_image_11_id = {}
-if "user_friends" not in st.session_state:
-    st.session_state.user_friends = {}
+# 1. Khởi tạo dữ liệu (sử dụng setdefault để tránh AttributeError)
+st.session_state.setdefault("user_profile", None)
+st.session_state.setdefault("matched_user", None)
+st.session_state.setdefault("messages_nn", [
+    {"sender": "Hệ thống", "text": "👋 Chào mừng! Bạn có thể kết bạn để chat chung hoặc chat riêng với bạn bè. Hãy chọn bạn ở phần bên trái nhé!", "type": "system"}
+])
+st.session_state.setdefault("messages_11", {})
+st.session_state.setdefault("active_call", {})
+st.session_state.setdefault("call_duration", 0)
+st.session_state.setdefault("active_video_call", {})
+st.session_state.setdefault("pending_upload_nn", {"image": None, "file": None, "audio": None})
+st.session_state.setdefault("pending_upload_11", {})
+st.session_state.setdefault("uploaded_image_nn_id", None)
+st.session_state.setdefault("uploaded_image_11_id", {})
+st.session_state.setdefault("user_friends", {})
 
 # Load dữ liệu từ file
 data = load_users_data()
