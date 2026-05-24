@@ -345,6 +345,18 @@
         "text": "ê",
         "type": "text",
         "timestamp": "2026-05-24T16:16:29.797073"
+      },
+      {
+        "sender": "Hệ thống",
+        "text": "[Cuộc gọi video kết thúc]",
+        "type": "system",
+        "timestamp": "2026-05-24T16:27:03.424842"
+      },
+      {
+        "sender": "Hệ thống",
+        "text": "[Cuộc gọi thoại kết thúc]",
+        "type": "system",
+        "timestamp": "2026-05-24T16:27:06.225161"
       }
     ]
   },
@@ -395,6 +407,18 @@
         "type": "voice",
         "duration": 0,
         "timestamp": "2026-05-24T12:13:43.325541"
+      },
+      {
+        "caller": "thành",
+        "type": "voice",
+        "duration": 0,
+        "timestamp": "2026-05-24T16:26:52.133635"
+      },
+      {
+        "caller": "hehe",
+        "type": "video",
+        "duration": 0,
+        "timestamp": "2026-05-24T16:26:58.050221"
       }
     ]
   },
@@ -404,6 +428,36 @@
       "text": "hi",
       "type": "text",
       "timestamp": "2026-05-24T16:16:19.220833"
+    },
+    {
+      "sender": "thành",
+      "text": "hi ạ ",
+      "type": "text",
+      "timestamp": "2026-05-24T16:25:37.967699"
+    },
+    {
+      "sender": "hehe",
+      "text": "dạ",
+      "type": "text",
+      "timestamp": "2026-05-24T16:26:06.462437"
+    },
+    {
+      "sender": "thành",
+      "text": "ủa",
+      "type": "text",
+      "timestamp": "2026-05-24T16:26:19.042955"
+    },
+    {
+      "sender": "hehe",
+      "text": "a nhon",
+      "type": "text",
+      "timestamp": "2026-05-24T16:26:30.706703"
+    },
+    {
+      "sender": "thành",
+      "text": "oke",
+      "type": "text",
+      "timestamp": "2026-05-24T16:26:36.723131"
     }
   ]
 }

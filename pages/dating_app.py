@@ -3,6 +3,20 @@ import json
 import os
 import hashlib
 from datetime import datetime
+import json
+import socket
+import threading
+from streamlit.components.v1 import html as st_html
+
+# Start background API server for polling group messages
+try:
+    from server_api import start_api_in_thread
+    # start only once per session
+    if "__api_thread_started" not in st.session_state:
+        start_api_in_thread(host="0.0.0.0", port=8502)
+        st.session_state.__api_thread_started = True
+except Exception:
+    pass
 
 # ---- HÀM LƯU/TẢI DỮ LIỆU ----
 DATA_FILE = "users_data.json"
@@ -381,7 +395,7 @@ else:
     # Auto-refresh client-side mỗi 2 giây để cập nhật tin nhắn real-time
     st.markdown("""
     <script>
-        const INTERVAL = 2000;
+        const INTERVAL = 1000; // giảm xuống 1s để cập nhật nhanh hơn
         // Only refresh when user is logged in (the server serves this snippet only when logged-in)
         setInterval(() => { window.location.reload(); }, INTERVAL);
     </script>
@@ -518,26 +532,64 @@ else:
             st.subheader("🌐 Sảnh chờ chung (N-N Chat)")
             
             # ---- HIỂN THỊ CHAT N-N (load từ file giống chat 1:1 và lưu vào session_state) ----
-            chat_container_nn = st.container(height=300)
-            # Load group messages into session state so they behave like private chat history
-            st.session_state.messages_nn = load_group_messages()
-            # Danh sách tên bạn (hiển thị chỉ các tin nhắn từ bạn bè hoặc chính bạn)
+            # Render chat N-N inside an embedded HTML component that polls the API
+            chat_container_nn = st.container()
+            # Prepare data for client-side filtering
             friend_names = st.session_state.user_friends.get(current_username, [])
-            for msg in st.session_state.messages_nn:
-                sender = msg.get('sender')
-                if msg.get('type') == 'system' or sender == st.session_state.user_profile.get('name') or sender in friend_names:
-                    if msg.get("type") == "system":
-                        chat_container_nn.info(msg['text'])
-                    elif msg.get("type") == "image":
-                        chat_container_nn.write(f"**{msg['sender']}:**")
-                        chat_container_nn.write(f"[Hình ảnh] {msg.get('text')}")
-                    elif msg.get("type") == "audio":
-                        chat_container_nn.write(f"**{msg['sender']}:** 🎤 Tin nhắn thoại")
-                        chat_container_nn.write(msg.get('text'))
-                    elif msg.get("type") == "file":
-                        chat_container_nn.write(f"**{msg['sender']}:** 📎 {msg.get('text')}")
-                    else:
-                        chat_container_nn.write(f"**{msg['sender']}:** {msg['text']}")
+            current_name = st.session_state.user_profile.get('name')
+            # Determine host IP for API calls (use server's network IP)
+            try:
+                host_ip = socket.gethostbyname(socket.gethostname())
+            except Exception:
+                host_ip = 'localhost'
+
+            component_html = f"""
+            <div id='group_chat' style='height:300px; overflow:auto; border:1px solid #444; padding:10px; background:#0b1220; color:#fff; border-radius:8px;'></div>
+            <script>
+            const FRIENDS = {json.dumps(friend_names)};
+            const CURRENT = {json.dumps(current_name)};
+            const API = 'http://{host_ip}:8502/group_messages';
+
+            function renderMessages(msgs) {{
+                const container = document.getElementById('group_chat');
+                let html = '';
+                msgs.forEach(m => {{
+                    const s = m.sender;
+                    if (m.type === 'system' || s === CURRENT || FRIENDS.includes(s)) {{
+                        if (m.type === 'system') {{
+                            html += `<div style='color:#9ecbff;margin:6px 0;'>${{m.text}}</div>`;
+                        }} else if (m.type === 'image') {{
+                            html += `<div><strong>${{s}}:</strong> [Hình ảnh] ${{m.text}}</div>`;
+                        }} else if (m.type === 'audio') {{
+                            html += `<div><strong>${{s}}:</strong> 🎤 Tin nhắn thoại</div>`;
+                        }} else if (m.type === 'file') {{
+                            html += `<div><strong>${{s}}:</strong> 📎 ${{m.text}}</div>`;
+                        }} else {{
+                            html += `<div><strong>${{s}}:</strong> ${{m.text}}</div>`;
+                        }}
+                    }}
+                }});
+                container.innerHTML = html;
+                container.scrollTop = container.scrollHeight;
+            }}
+
+            async function poll() {{
+                try {{
+                    const res = await fetch(API);
+                    const data = await res.json();
+                    renderMessages(data.group_messages || []);
+                }} catch (e) {{
+                    // ignore
+                }}
+            }}
+
+            // initial
+            poll();
+            setInterval(poll, 1000);
+            </script>
+            """
+
+            st_html(component_html, height=340)
             
             st.divider()
             
